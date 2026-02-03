@@ -195,3 +195,4 @@ initCharCounter();
 initGalleryFilter();
 initConverter();
 initContactForm();
+
