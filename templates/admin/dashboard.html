@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Webryx Admin Dashboard</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+    <!-- GOOGLE FONTS SAME -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Saira:wght@500;600;700&display=swap" rel="stylesheet">
+
+    <!-- ICONS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+
+   
+<!-- USER LIBRARIES -->
+<link href="{{ url_for('static', filename='user/lib/animate/animate.min.css') }}" rel="stylesheet">
+<link href="{{ url_for('static', filename='user/lib/owlcarousel/assets/owl.carousel.min.css') }}" rel="stylesheet">
+
+<!-- USER CSS -->
+<link href="{{ url_for('static', filename='user/css/bootstrap.min.css') }}" rel="stylesheet">
+<link href="{{ url_for('static', filename='user/css/style.css') }}" rel="stylesheet">
+
+<!-- ADMIN CSS -->
+<link href="{{ url_for('static', filename='admin/admin.css') }}" rel="stylesheet">
+
+
+</head>
+
+<body>
+
+<div class="admin-container">
+
+    <!-- SIDEBAR -->
+    <div class="admin-sidebar wow fadeInLeft">
+
+        <h2 class="text-white fw-bold">Web<span class="text-secondary">Ryx</span></h2>
+
+        <ul>
+            <li class="active"><i class="fa fa-home"></i>  Dashboard</li>
+            <li><i class="fa fa-blog"></i>  Blogs</li>
+            <li><i class="fa fa-project-diagram"></i>  Projects</li>
+            <li><i class="fa fa-users"></i>  Users</li>
+            <li><i class="fa fa-envelope"></i>  Contacts</li>
+        </ul>
+
+    </div>
+
+
+    <!-- MAIN CONTENT -->
+    <div class="admin-main">
+
+        <!-- TOPBAR -->
+        <div class="admin-topbar wow fadeInDown">
+            <h4 class="text-primary">Admin Dashboard</h4>
+        </div>
+
+
+        <!-- STATS -->
+        <div class="row g-4 mt-2">
+
+            <div class="col-md-3 wow fadeInUp">
+                <div class="admin-card">
+                    <i class="fa fa-blog"></i>
+                    <h3>120</h3>
+                    <p>Total Blogs</p>
+                </div>
+            </div>
+
+            <div class="col-md-3 wow fadeInUp" data-wow-delay=".2s">
+                <div class="admin-card">
+                    <i class="fa fa-project-diagram"></i>
+                    <h3>45</h3>
+                    <p>Projects</p>
+                </div>
+            </div>
+
+            <div class="col-md-3 wow fadeInUp" data-wow-delay=".4s">
+                <div class="admin-card">
+                    <i class="fa fa-users"></i>
+                    <h3>300</h3>
+                    <p>Users</p>
+                </div>
+            </div>
+
+            <div class="col-md-3 wow fadeInUp" data-wow-delay=".6s">
+                <div class="admin-card">
+                    <i class="fa fa-envelope"></i>
+                    <h3>86</h3>
+                    <p>Messages</p>
+                </div>
+            </div>
+
+        </div>
+
+
+        <!-- RECENT BLOG TABLE -->
+        <div class="admin-table wow fadeInUp mt-5">
+            <h5 class="text-secondary mb-4">Recent Blog Posts</h5>
+
+            <table class="table table-bordered">
+                <thead class="bg-primary text-white">
+                    <tr>
+                        <th>Title</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr>
+                        <td>UI Trends 2026</td>
+                        <td>12 Feb</td>
+                        <td>Published</td>
+                    </tr>
+
+                    <tr>
+                        <td>AI Website Builders</td>
+                        <td>10 Feb</td>
+                        <td>Draft</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- JS LIBRARIES SAME AS INDEX -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+
+<script src="{{ url_for('static', filename='user/lib/wow/wow.min.js') }}"></script>
+<script src="{{ url_for('static', filename='user/lib/easing/easing.min.js') }}"></script>
+<script src="{{ url_for('static', filename='user/lib/owlcarousel/owl.carousel.min.js') }}"></script>
+
+<script src="{{ url_for('static', filename='user/js/main.js') }}"></script>
+
+
+<script>
+new WOW().init();
+</script>
+
+</body>
+</html>
