@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UrbanBite | Modern Restaurant</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/bootstrap.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="images/favicon.png">
+</head>
+
+<body>
+
+ <!-- NAVIGATION -->
+<!-- NAVIGATION -->
+<header class="header-area">
+  <div class="container">
+    <nav class="navbar navbar-expand-lg navbar-dark position-relative">
+
+      <!-- Logo -->
+      <a class="navbar-brand" href="#">UrbanBite</a>
+
+      <!-- Toggler -->
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <!-- Links -->
+      <div class="collapse navbar-collapse justify-content-end" id="navMenu">
+
+        <!-- Center Menu -->
+        <ul class="navbar-nav position-absolute start-50 translate-middle-x">
+          <li class="nav-item">
+            <a class="nav-link active" href="#">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="menu.html">Menu</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="reservations.html">Reservations</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="contact.html">Contact</a>
+          </li>
+        </ul>
+
+        <!-- Right Cart Icon -->
+        <div class="nav-right ms-auto">
+          <a href="#" class="cart-icon">
+            <i class="fa-solid fa-cart-shopping"></i>
+          </a>
+        </div>
+
+      </div>
+    </nav>
+  </div>
+</header>
+
+  <!-- HERO SECTION -->
+  <section class="hero-section d-flex align-items-center text-center text-white">
+    <div class="container">
+      <h1 class="display-4">Experience Taste Like Never Before</h1>
+      <p class="lead">Fresh ingredients. Modern flavors. Crafted with passion.</p>
+      <a href="menu.html" class="btn btn-warning btn-lg mt-3">Explore Menu</a>
+    </div>
+  </section>
+
+  <!-- WHY CHOOSE US -->
+  <section class="why-section py-5">
+    <div class="container text-center">
+      <h2 class="mb-5">Why Choose Us?</h2>
+      <div class="row">
+
+        <div class="col-md-4 mb-4">
+          <div class="feature-card">
+            <h5>Fresh Ingredients</h5>
+            <p>Locally sourced vegetables and premium quality meats.</p>
+          </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+          <div class="feature-card">
+            <h5>Expert Chefs</h5>
+            <p>Professionally trained chefs delivering world-class flavors.</p>
+          </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+          <div class="feature-card">
+            <h5>Fast Delivery</h5>
+            <p>Hot and fresh meals delivered quickly to your doorstep.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- POPULAR DISHES -->
+<section class="food-section py-5">
+  <div class="container">
+    <div class="text-center mb-5">
+      <h2 class="section-title">Popular Dishes</h2>
+    </div>
+
+    <div class="row d-flex align-items-stretch">
+
+      <div class="col-md-4 mb-4 d-flex">
+        <div class="food-card w-100">
+          <div class="food-img">
+            <img src="images/f1.png" alt="">
+          </div>
+          <div class="food-content">
+            <h4>Delicious Pizza</h4>
+            <p>Fresh toppings with premium mozzarella and herbs.</p>
+            <div class="food-bottom">
+              <span>$20</span>
+              <button class="cart-btn">
+                <i class="fa-solid fa-cart-shopping"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4 mb-4 d-flex">
+        <div class="food-card w-100">
+          <div class="food-img">
+            <img src="images/f2.png" alt="">
+          </div>
+          <div class="food-content">
+            <h4>Delicious Burger</h4>
+            <p>Juicy grilled patty with fresh lettuce & cheese.</p>
+            <div class="food-bottom">
+              <span>$15</span>
+              <button class="cart-btn">
+                <i class="fa-solid fa-cart-shopping"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4 mb-4 d-flex">
+        <div class="food-card w-100">
+          <div class="food-img">
+            <img src="images/f3.png" alt="">
+          </div>
+          <div class="food-content">
+            <h4>Delicious Pizza</h4>
+            <p>Authentic Italian base with basil and olives.</p>
+            <div class="food-bottom">
+              <span>$17</span>
+              <button class="cart-btn">
+                <i class="fa-solid fa-cart-shopping"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+ <!-- BOOK TABLE -->
+<section class="py-5 bg-white">
+  <div class="container text-center">
+    <h2 class="mb-5 section-title">Book a Table</h2>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <form>
+
+          <div class="form-row">
+
+            <div class="form-group col-md-6">
+              <input type="text" class="form-control" placeholder="Your Name">
+            </div>
+
+            <div class="form-group col-md-6">
+              <input type="email" class="form-control" placeholder="Your Email">
+            </div>
+
+            <div class="form-group col-md-6">
+              <select class="form-control">
+                <option selected disabled>How Many Persons?</option>
+                <option>1 Person</option>
+                <option>2 Persons</option>
+                <option>3 Persons</option>
+                <option>4 Persons</option>
+                <option>5 Persons</option>
+                <option>6+ Persons</option>
+              </select>
+            </div>
+
+            <div class="form-group col-md-6">
+              <input type="date" class="form-control">
+            </div>
+
+          </div>
+
+          <button class="btn btn-warning btn-lg mt-3">
+            Reserve Now
+          </button>
+
+        </form>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+  <!-- FOOTER -->
+  <footer class="text-white py-4 text-center">
+    <div class="container">
+      <h5>UrbanBite</h5>
+      <p>Pune | 10:00 AM – 10:00 PM</p>
+      <p>© 2026 UrbanBite. All Rights Reserved.</p>
+    </div>
+  </footer>
+
+  <script src="js/jquery-3.4.1.min.js"></script>
+  <script src="js/bootstrap.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

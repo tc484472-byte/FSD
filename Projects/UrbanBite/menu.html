@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UrbanBite | Menu</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="images/favicon.png">
+
+  <style>
+    /* Ensure equal height cards */
+    .menu-item {
+      display: flex;
+    }
+
+    .menu-item .food-card {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    /* Smooth filter animation */
+    .menu-item {
+      transition: 0.4s ease;
+    }
+
+    .menu-item.hide {
+      opacity: 0;
+      transform: scale(0.9);
+      pointer-events: none;
+      position: absolute;
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<header class="header-area">
+  <div class="container">
+    <nav class="navbar navbar-expand-lg navbar-dark position-relative">
+
+      <a class="navbar-brand" href="index.html">UrbanBite</a>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse justify-content-end" id="navMenu">
+
+        <ul class="navbar-nav position-absolute start-50 translate-middle-x">
+          <li class="nav-item">
+            <a class="nav-link" href="index.html">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="menu.html">Menu</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="reservations.html">Reservations</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="contact.html">Contact</a>
+          </li>
+        </ul>
+
+        <div class="nav-right ms-auto">
+          <a href="#" class="cart-icon">
+            <i class="fa-solid fa-cart-shopping"></i>
+          </a>
+        </div>
+
+      </div>
+    </nav>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero-section d-flex align-items-center text-center text-white" style="height:60vh;">
+  <div class="container">
+    <h1 class="display-4">Our Menu</h1>
+    <p class="lead">Crafted with passion & premium ingredients</p>
+  </div>
+</section>
+
+<!-- MENU SECTION -->
+<section class="food-section py-5">
+  <div class="container">
+
+    <div class="text-center mb-5">
+      <h2 class="section-title mb-4">Explore Dishes</h2>
+
+      <div class="menu-filters">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="pizza">Pizza</button>
+        <button class="filter-btn" data-filter="burger">Burger</button>
+        <button class="filter-btn" data-filter="pasta">Pasta</button>
+        <button class="filter-btn" data-filter="fries">Fries</button>
+      </div>
+    </div>
+
+    <div class="row position-relative">
+
+      <!-- PIZZA -->
+      <div class="col-md-4 mb-4 menu-item pizza">
+        <div class="food-card">
+          <div class="food-img">
+            <img src="images/f1.png" alt="">
+          </div>
+          <div class="food-content">
+            <h4>Truffle Pizza</h4>
+            <p>Stone baked pizza topped with truffle oil & fresh basil.</p>
+            <div class="food-bottom">
+              <span>$22</span>
+              <button class="cart-btn"><i class="fa-solid fa-cart-shopping"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BURGER -->
+      <div class="col-md-4 mb-4 menu-item burger">
+        <div class="food-card">
+          <div class="food-img">
+            <img src="images/f2.png" alt="">
+          </div>
+          <div class="food-content">
+            <h4>Classic Beef Burger</h4>
+            <p>Juicy grilled beef patty with cheddar & house sauce.</p>
+            <div class="food-bottom">
+              <span>$18</span>
+              <button class="cart-btn"><i class="fa-solid fa-cart-shopping"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PASTA -->
+      <div class="col-md-4 mb-4 menu-item pasta">
+        <div class="food-card">
+          <div class="food-img">
+            <img src="images/f4.png" alt="">
+          </div>
+          <div class="food-content">
+            <h4>Creamy Alfredo Pasta</h4>
+            <p>Rich parmesan cream sauce with garlic & herbs.</p>
+            <div class="food-bottom">
+              <span>$16</span>
+              <button class="cart-btn"><i class="fa-solid fa-cart-shopping"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FRIES -->
+      <div class="col-md-4 mb-4 menu-item fries">
+        <div class="food-card">
+          <div class="food-img">
+            <img src="images/f5.png" alt="">
+          </div>
+          <div class="food-content">
+            <h4>Loaded Fries</h4>
+            <p>Crispy fries topped with cheese & spicy mayo.</p>
+            <div class="food-bottom">
+              <span>$12</span>
+              <button class="cart-btn"><i class="fa-solid fa-cart-shopping"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PIZZA -->
+      <div class="col-md-4 mb-4 menu-item pizza">
+        <div class="food-card">
+          <div class="food-img">
+            <img src="images/f6.png" alt="">
+          </div>
+          <div class="food-content">
+            <h4>Pepperoni Pizza</h4>
+            <p>Classic pepperoni with mozzarella & tomato base.</p>
+            <div class="food-bottom">
+              <span>$20</span>
+              <button class="cart-btn"><i class="fa-solid fa-cart-shopping"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BURGER -->
+      <div class="col-md-4 mb-4 menu-item burger">
+        <div class="food-card">
+          <div class="food-img">
+            <img src="images/f7.png" alt="">
+          </div>
+          <div class="food-content">
+            <h4>Signature Burger</h4>
+            <p>Double patty with caramelized onions & BBQ glaze.</p>
+            <div class="food-bottom">
+              <span>$21</span>
+              <button class="cart-btn"><i class="fa-solid fa-cart-shopping"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="text-white py-4 text-center">
+  <div class="container">
+    <h5>UrbanBite</h5>
+    <p>Pune | 10:00 AM – 10:00 PM</p>
+    <p>© 2026 UrbanBite. All Rights Reserved.</p>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- FILTER SCRIPT -->
+<script>
+  const buttons = document.querySelectorAll(".filter-btn");
+  const items = document.querySelectorAll(".menu-item");
+
+  buttons.forEach(button => {
+    button.addEventListener("click", () => {
+
+      // active button
+      buttons.forEach(btn => btn.classList.remove("active"));
+      button.classList.add("active");
+
+      const filter = button.getAttribute("data-filter");
+
+      items.forEach(item => {
+        if (filter === "all" || item.classList.contains(filter)) {
+          item.classList.remove("hide");
+        } else {
+          item.classList.add("hide");
+        }
+      });
+
+    });
+  });
+</script>
+
+</body>
+</html>
