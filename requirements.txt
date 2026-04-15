@@ -6,3 +6,4 @@ authlib
 flask-mail
 itsdangerous
 werkzeug
+razorpay
