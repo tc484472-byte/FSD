@@ -2,24 +2,59 @@
 
 {% block content %}
 
+<!-- ===== HERO — image only ===== -->
 <section class="project-hero">
-<div class="overlay text-center text-white">
 
-{% if images and images|length > 0 %}
-<img src="{{ images[0].image_url }}" class="img-fluid rounded mb-3">
-{% else %}
-<img src="https://via.placeholder.com/1200x400?text=No+Image" class="img-fluid rounded mb-3">
-{% endif %}
+  {% if images and images|length > 0 %}
+  <img src="{{ images[0].image_url }}">
+  {% else %}
+  <img src="https://via.placeholder.com/1200x400?text=No+Image">
+  {% endif %}
 
-<h1 class="mb-2">{{ project.title }}</h1>
-<span class="badge bg-primary">{{ project.category }}</span>
-
-</div>
 </section>
 
+<br>
+<!-- ===== PROJECT TITLE BAR ===== -->
+<div class="project-title-bar">
+  <div class="container text-center">
+    <h2 class="project-title-text">{{ project.title }}</h2>
+    <!-- <span class="badge bg-primary ms-3" style="font-size:13px; vertical-align:middle;">
+      {{ project.category }}
+    </span> -->
+  </div>
+</div>
+
+<style>
+  .project-title-bar {
+    display: block !important;
+    visibility: visible !important;
+    width: 100%;
+    background: #ffffff;
+    /* border-top: 3px solid #0d6efd; */
+    /* border-bottom: 1px solid #dee2e6; */
+    padding: 16px 0;
+    margin-bottom: 0;
+    z-index: 10;
+    position: relative;
+  }
+
+  .project-title-text {
+    display: inline;
+    font-size: clamp(1.3rem, 3vw, 2rem);
+    font-weight: 700;
+    color: #116466 !important;
+    margin: 0;
+    align-self: center;
+    align-items: center;
+  }
+</style>
+
+
+<!-- ===== MAIN CONTENT ===== -->
 <div class="container py-5">
 <div class="row g-5">
 
+<!-- LEFT: gallery + description -->
 <div class="col-lg-8">
 
 {% if images and images|length > 0 %}
@@ -43,40 +78,38 @@
 
 </div>
 
+<!-- RIGHT: purchase card -->
 <div class="col-lg-4">
 <div class="purchase-card p-4 shadow rounded bg-white">
 
 {% if project.has_price %}
 
-<div class="price-display mb-3"
+<div class="price-display mb-2"
 id="priceDisplay"
 data-price="{{ project.base_price }}"
 data-currency="{{ project.base_currency }}">
 
-<span id="basePrice">
-{{ project.base_price }} {{ project.base_currency }}
-</span>
-
-<span id="convertedPrice"></span>
+<span id="basePrice">{{ project.base_price }} {{ project.base_currency }}</span>
+<br>
+<span id="convertedPrice" style="font-size:15px; color:#198754; font-weight:600;"></span>
 
 </div>
 
 <div class="mb-3">
-<select class="form-select" id="currencySelect">
-
-<option value="INR">INR</option>
-<option value="USD">USD</option>
-<option value="EUR">EUR</option>
-<option value="GBP">GBP</option>
-<option value="AUD">AUD</option>
-<option value="CAD">CAD</option>
-<option value="JPY">JPY</option>
-
-</select>
+  <label style="font-size:12px; color:#888; margin-bottom:4px; display:block; text-transform:uppercase; letter-spacing:.5px;">Convert Currency</label>
+  <select class="form-select" id="currencySelect">
+    <option value="INR"> INR — Indian Rupee</option>
+    <option value="USD"> USD — US Dollar</option>
+    <option value="EUR"> EUR — Euro</option>
+    <option value="GBP"> GBP — British Pound</option>
+    <option value="AUD"> AUD — Australian Dollar</option>
+    <option value="CAD"> CAD — Canadian Dollar</option>
+    <option value="JPY"> JPY — Japanese Yen</option>
+  </select>
 </div>
 
 <button type="button" class="btn btn-success w-100 mb-2" onclick="payNow(event)">
-Buy Now
+  Buy Now
 </button>
 
 {% else %}
@@ -88,16 +121,14 @@ Free Template
 {% endif %}
 
 {% if project.preview_link %}
-<a href="{{ project.preview_link }}" target="_blank"
-class="btn btn-primary w-100 mb-2">
-Live Preview
+<a href="{{ project.preview_link }}" target="_blank" class="btn btn-primary w-100 mb-2">
+  Live Preview
 </a>
 {% endif %}
 
 {% if project.github_link %}
-<a href="{{ project.github_link }}" target="_blank"
-class="btn btn-dark w-100">
-Download
+<a href="{{ project.github_link }}" target="_blank" class="btn btn-dark w-100">
+  Download
 </a>
 {% endif %}
 
@@ -116,93 +147,77 @@ let exchangeRates = {};
 
 document.addEventListener("DOMContentLoaded", async function(){
 
-const priceElement = document.getElementById("priceDisplay");
-const currencySelect = document.getElementById("currencySelect");
-const convertedPrice = document.getElementById("convertedPrice");
+  const priceElement   = document.getElementById("priceDisplay");
+  const currencySelect = document.getElementById("currencySelect");
+  const convertedPrice = document.getElementById("convertedPrice");
 
-if(!priceElement) return;
+  if(!priceElement) return;
 
-const basePrice = Number(priceElement.dataset.price);
-const baseCurrency = priceElement.dataset.currency;
+  const basePrice    = Number(priceElement.dataset.price);
+  const baseCurrency = priceElement.dataset.currency;
 
-try{
+  // pre-select base currency
+  if(currencySelect){
+    [...currencySelect.options].forEach(o => {
+      if(o.value === baseCurrency) o.selected = true;
+    });
+  }
 
-const response = await fetch(`https://open.er-api.com/v6/latest/${baseCurrency}`);
-const data = await response.json();
+  try{
+    const response = await fetch(`https://open.er-api.com/v6/latest/${baseCurrency}`);
+    const data     = await response.json();
+    exchangeRates  = data.rates;
+  }catch(error){
+    console.error("Exchange rate load failed", error);
+  }
 
-exchangeRates = data.rates;
-
-}catch(error){
-
-console.error("Exchange rate load failed",error);
-
-}
-
-currencySelect.addEventListener("change",function(){
-
-const currency = this.value;
-
-if(currency === baseCurrency){
-
-convertedPrice.innerText = "";
-return;
-
-}
-
-const rate = exchangeRates[currency];
-
-if(rate){
-
-const converted = (basePrice * rate).toFixed(2);
-
-convertedPrice.innerText = ` | ${converted} ${currency}`;
-
-}
-
-});
+  currencySelect.addEventListener("change", function(){
+    const currency = this.value;
+    if(currency === baseCurrency){
+      convertedPrice.innerText = "";
+      return;
+    }
+    const rate = exchangeRates[currency];
+    if(rate){
+      const converted = (basePrice * rate).toFixed(2);
+      convertedPrice.innerText = `≈ ${converted} ${currency}`;
+    }
+  });
 
 });
 
 function changeImage(element){
-
-document.getElementById("mainImage").src = element.src;
-
+  document.getElementById("mainImage").src = element.src;
 }
 
 function payNow(event){
+  if(event) event.preventDefault();
 
-if(event) event.preventDefault();
+  var priceDisplay = document.getElementById("priceDisplay");
 
-var priceDisplay = document.getElementById("priceDisplay");
+  var options = {
+    "key": "YOUR_RAZORPAY_PUBLIC_KEY",
+    "amount": priceDisplay.dataset.price * 100,
+    "currency": priceDisplay.dataset.currency,
+    "name": "WebRyx",
+    "description": "Project Purchase",
+    "handler": function(response){
+      alert("Payment Successful!");
+      document.body.style.overflow = "auto";
+    },
+    "modal": {
+      "ondismiss": function(){
+        document.body.style.overflow = "auto";
+      }
+    }
+  };
 
-var options = {
-"key":"YOUR_RAZORPAY_PUBLIC_KEY",
-"amount": priceDisplay.dataset.price * 100,
-"currency": priceDisplay.dataset.currency,
-"name":"WebRyx",
-"description":"Project Purchase",
+  var rzp1 = new Razorpay(options);
+  rzp1.open();
 
-"handler": function(response){
-alert("Payment Successful!");
-document.body.style.overflow="auto";
-},
-
-"modal":{
-"ondismiss":function(){
-document.body.style.overflow="auto";
-}
-}
-
-};
-
-var rzp1 = new Razorpay(options);
-rzp1.open();
-
-/* fallback scroll restore */
-setTimeout(function(){
-document.body.style.overflow="auto";
-},500);
-
+  setTimeout(function(){
+    document.body.style.overflow = "auto";
+  }, 500);
 }
 
 </script>

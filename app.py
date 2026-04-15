@@ -147,13 +147,14 @@ def project():
     try:
         category = request.args.get("category")
         division = request.args.get("division")
-        query    = supabase.table("projects_with_thumbnail").select("*")
+        query    = supabase.table("projects").select("*")
         if category and category != "all":
             query = query.eq("category", category)
         if division and division != "all":
             query = query.eq("division", division)
         response = query.order("created_at", desc=True).execute()
-        return render_template("project.html", projects=response.data)
+        projects = attach_project_images(response.data)
+        return render_template("project.html", projects=projects)
     except Exception as e:
         print("PROJECT LIST ERROR:", e)
         return render_template("404.html")
@@ -212,48 +213,80 @@ def admin_contact():
 
 
 # ==========================================================
-# ADD PROJECT
+# ADD / UPDATE PROJECT
 # ==========================================================
 @app.route("/admin/add-project", methods=["POST"])
 def add_project():
     try:
-        files         = request.files.getlist("image_file")
+        files = request.files.getlist("image_file")
+
         has_price     = request.form.get("has_price") == "true"
         base_price    = request.form.get("base_price") if has_price else 0
         base_currency = request.form.get("base_currency") if has_price else "INR"
         division      = request.form.get("division", "A")
-        image_urls    = []
 
+        # 🔥 EXISTING IMAGES (coming from hidden inputs)
+        existing_images = request.form.getlist("existing_images")
+
+        new_image_urls = []
+
+        # 🔥 Upload NEW images
         for file in files:
             if file and file.filename != "":
-                ext        = file.filename.split('.')[-1]
-                file_name  = f"{uuid.uuid4()}.{ext}"
-                file_bytes = file.read()
-                supabase.storage.from_("project-images").upload(
-                    file_name, file_bytes, {"content-type": file.content_type}
-                )
-                image_url = supabase.storage.from_("project-images").get_public_url(file_name)
-                image_urls.append({"url": image_url})
+                ext = file.filename.split('.')[-1]
+                file_name = f"{uuid.uuid4()}.{ext}"
 
-        result = supabase.rpc("add_project_with_images", {
-            "p_title":         request.form.get("title"),
-            "p_description":   request.form.get("description"),
-            "p_category":      request.form.get("category"),
-            "p_division":      division,
-            "p_has_price":     has_price,
-            "p_base_price":    base_price,
+                file_bytes = file.read()
+
+                supabase.storage.from_("project-images").upload(
+                    file_name,
+                    file_bytes,
+                    {"content-type": file.content_type}
+                )
+
+                image_url = supabase.storage.from_("project-images").get_public_url(file_name)
+                new_image_urls.append({"url": image_url})
+
+        # 🔥 MERGE old + new images
+        final_images = []
+
+        # keep old
+        for img in existing_images:
+            final_images.append({"url": img})
+
+        # add new
+        for img in new_image_urls:
+            final_images.append(img)
+
+        # if empty → None
+        p_images = final_images if final_images else None
+
+        # 🔥 CALL SQL FUNCTION
+        result = supabase.rpc("upsert_project", {
+            "p_project_id": request.form.get("project_id") or None,
+            "p_title": request.form.get("title"),
+            "p_description": request.form.get("description"),
+            "p_category": request.form.get("category"),
+            "p_division": division,
+            "p_has_price": has_price,
+            "p_base_price": base_price,
             "p_base_currency": base_currency,
-            "p_preview_link":  request.form.get("preview_link"),
-            "p_github_link":   request.form.get("github_link"),
-            "p_images":        image_urls
+            "p_preview_link": request.form.get("preview_link"),
+            "p_github_link": request.form.get("github_link"),
+            "p_images": p_images
         }).execute()
 
-        return jsonify({"success": True, "project_id": result.data})
+        return jsonify({
+            "success": True,
+            "project_id": result.data
+        })
 
     except Exception as e:
         print("UPLOAD ERROR:", str(e))
-        return jsonify({"success": False, "error": str(e)}), 500
-
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
 
 @app.route("/admin/projectback")
 def project_back():

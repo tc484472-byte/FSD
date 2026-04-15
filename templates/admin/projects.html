@@ -186,19 +186,14 @@ enctype="multipart/form-data">
 Has Price
 </label>
 <div class="division-switch">
-
-                                <span class="division-text">A</span>
-
-                                <label class="switch">
-                                    <input type="checkbox" name="division_toggle" id="divisionToggle">
-                                    <span class="slider"></span>
-                                </label>
-
-                                <span class="division-text">B</span>
-
-                                <input type="hidden" name="division" id="divisionValue" value="A">
-
-                            </div>
+    <span class="division-text">A</span>
+    <label class="switch">
+        <input type="checkbox" name="division_toggle" id="divisionToggle">
+        <span class="slider"></span>
+    </label>
+    <span class="division-text">B</span>
+    <input type="hidden" name="division" id="divisionValue" value="A">
+</div>
 </div>
 
 <div class="form-row price-row" id="priceFields" style="display:none;">
@@ -242,215 +237,170 @@ Update Project
 
 <script>
 
-document.addEventListener("DOMContentLoaded",function(){
+document.addEventListener("DOMContentLoaded", function () {
 
-const popup=document.getElementById("formPopup");
-const closeBtn=document.getElementById("closeForm");
-const grid=document.getElementById("imageGrid");
-const projectForm=document.getElementById("projectForm");
+  const popup       = document.getElementById("formPopup");
+  const closeBtn    = document.getElementById("closeForm");
+  const grid        = document.getElementById("imageGrid");
+  const projectForm = document.getElementById("projectForm");
 
-const hasPriceCheck=document.getElementById("hasPriceCheck");
-const priceFields=document.getElementById("priceFields");
+  const hasPriceCheck = document.getElementById("hasPriceCheck");
+  const priceFields   = document.getElementById("priceFields");
+  const divisionToggle = document.getElementById("divisionToggle");
+  const divisionValue  = document.getElementById("divisionValue");
 
-hasPriceCheck.addEventListener("change",function(){
-priceFields.style.display=this.checked ? "flex" : "none";
-});
+  hasPriceCheck.addEventListener("change", function () {
+    priceFields.style.display = this.checked ? "flex" : "none";
+  });
 
+  divisionToggle.addEventListener("change", function () {
+    divisionValue.value = this.checked ? "B" : "A";
+  });
 
-/* ================= EDIT PROJECT ================= */
 
-document.querySelectorAll(".editBtn").forEach(btn=>{
+  /* ================= EDIT PROJECT ================= */
 
-btn.addEventListener("click",function(){
+  document.querySelectorAll(".editBtn").forEach(btn => {
 
-popup.style.display="flex";
+    btn.addEventListener("click", function () {
 
-grid.innerHTML="";
+      popup.style.display = "flex";
+      grid.innerHTML = "";
 
-document.getElementById("projectId").value=this.dataset.id;
+      document.getElementById("projectId").value = this.dataset.id;
+      document.querySelector("input[name='title']").value       = this.dataset.title;
+      document.querySelector("input[name='description']").value = this.dataset.description;
+      document.querySelector("select[name='category']").value   = this.dataset.category;
 
-document.querySelector("input[name='title']").value=this.dataset.title;
-document.querySelector("input[name='description']").value=this.dataset.description;
-document.querySelector("select[name='category']").value=this.dataset.category;
-const division = this.dataset.division || "A";
+      const division = this.dataset.division || "A";
+      divisionValue.value    = division;
+      divisionToggle.checked = (division === "B");
 
-document.getElementById("divisionValue").value = division;
-document.getElementById("divisionToggle").checked = (division === "B");
-document.querySelector("input[name='preview_link']").value=this.dataset.preview || "";
-document.querySelector("input[name='github_link']").value=this.dataset.github || "";
+      document.querySelector("input[name='preview_link']").value = this.dataset.preview || "";
+      document.querySelector("input[name='github_link']").value  = this.dataset.github  || "";
 
-const hasPrice=this.dataset.hasprice==="True" || this.dataset.hasprice==="true";
+      const hasPrice = this.dataset.hasprice === "True" || this.dataset.hasprice === "true";
+      hasPriceCheck.checked         = hasPrice;
+      priceFields.style.display     = hasPrice ? "flex" : "none";
 
-hasPriceCheck.checked=hasPrice;
-priceFields.style.display=hasPrice ? "flex" : "none";
+      document.getElementById("basePrice").value    = this.dataset.price    || "";
+      document.getElementById("baseCurrency").value = this.dataset.currency || "";
 
-document.getElementById("basePrice").value=this.dataset.price || "";
-document.getElementById("baseCurrency").value=this.dataset.currency || "";
+      /* ✅ FIXED: single image loop — removed duplicate broken block */
+      const images = JSON.parse(this.dataset.images || "[]");
 
+      images.forEach(img => {
+        const card = document.createElement("div");
+        card.className = "image-card";
+        card.innerHTML = `
+          <img src="${img}">
+          <input type="hidden" name="existing_images" value="${img}">
+          <button type="button" class="remove-btn" data-url="${img}">✖</button>
+        `;
+        grid.appendChild(card);
+      });
 
-/* EXISTING IMAGES */
+      createAddButton();
 
-const images=JSON.parse(this.dataset.images || "[]");
+    });
+  });
 
-images.forEach(img=>{
 
-const card=document.createElement("div");
-card.className="image-card";
+  function createAddButton() {
 
-card.innerHTML=`
-<img src="${img}">
-<button type="button" class="remove-btn" data-url="${img}">✖</button>
-`;
+    const addBtn = document.createElement("label");
+    addBtn.className = "add-image";
+    addBtn.innerHTML = `+<input type="file" name="image_file" multiple hidden>`;
+    grid.appendChild(addBtn);
 
-grid.appendChild(card);
+    const fileInput = addBtn.querySelector("input");
 
-});
+    fileInput.addEventListener("change", function () {
+      const files = this.files;
+      for (let i = 0; i < files.length; i++) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          const card = document.createElement("div");
+          card.className = "image-card";
+          card.innerHTML = `
+            <img src="${e.target.result}">
+            <button type="button" class="remove-btn">✖</button>
+          `;
+          grid.insertBefore(card, addBtn);
+        };
+        reader.readAsDataURL(files[i]);
+      }
+    });
+  }
 
-/* ADD BUTTON */
 
-createAddButton();
+  /* CLOSE POPUP */
 
-});
-
-});
-
-
-function createAddButton(){
-
-const addBtn=document.createElement("label");
-addBtn.className="add-image";
-
-addBtn.innerHTML=`
-+
-<input type="file" name="image_file" multiple hidden>
-`;
-
-grid.appendChild(addBtn);
-
-const fileInput=addBtn.querySelector("input");
-
-fileInput.addEventListener("change",function(){
-
-const files=this.files;
-
-for(let i=0;i<files.length;i++){
-
-const reader=new FileReader();
-
-reader.onload=function(e){
-
-const card=document.createElement("div");
-card.className="image-card";
-
-card.innerHTML=`
-<img src="${e.target.result}">
-<button type="button" class="remove-btn">✖</button>
-`;
-
-grid.insertBefore(card,addBtn);
-
-};
-
-reader.readAsDataURL(files[i]);
-
-}
-
-});
-
-}
-
-
-/* CLOSE POPUP */
-
-closeBtn.addEventListener("click",function(){
-popup.style.display="none";
-});
-
-
-/* ================= DELETE PROJECT ================= */
-
-document.querySelectorAll(".deleteBtn").forEach(btn=>{
-
-btn.addEventListener("click",async function(){
-
-const id=this.dataset.id;
-
-if(!confirm("Delete this project?"))return;
-
-await fetch(`/admin/delete-project/${id}`,{
-method:"DELETE"
-});
-
-location.reload();
-
-});
-
-});
-
-
-/* ================= DELETE IMAGE ================= */
-
-document.addEventListener("click",async function(e){
-
-if(e.target.classList.contains("remove-btn")){
-
-const card=e.target.closest(".image-card");
-const url=e.target.dataset.url;
-
-if(url){
-
-await fetch("/admin/delete-image",{
-method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify({image_url:url})
-});
-
-}
-
-card.remove();
-
-}
-
-});
-
-
-/* ================= FIX: AJAX FORM SUBMIT ================= */
-
-projectForm.addEventListener("submit",async function(e){
-
-e.preventDefault();
-
-const formData=new FormData(projectForm);
-
-try{
-
-const response=await fetch(projectForm.action,{
-method:"POST",
-body:formData
-});
-
-const result=await response.json();
-
-if(result.success){
-
-popup.style.display="none";
-
-location.reload();
-
-}else{
-
-alert("Failed to update project");
-
-}
-
-}catch(error){
-
-console.error(error);
-alert("Server error");
-
-}
-
-});
+  closeBtn.addEventListener("click", function () {
+    popup.style.display = "none";
+  });
+
+
+  /* ================= DELETE PROJECT ================= */
+
+  document.querySelectorAll(".deleteBtn").forEach(btn => {
+    btn.addEventListener("click", async function () {
+      const id = this.dataset.id;
+      if (!confirm("Delete this project?")) return;
+      await fetch(`/admin/delete-project/${id}`, { method: "DELETE" });
+      location.reload();
+    });
+  });
+
+
+  /* ================= DELETE IMAGE ================= */
+  /* ✅ FIXED: single guard, no duplicate block */
+
+  document.addEventListener("click", async function (e) {
+
+    if (!e.target.classList.contains("remove-btn")) return;
+
+    const card = e.target.closest(".image-card");
+    const url  = e.target.dataset.url;
+
+    const hiddenInput = card.querySelector("input[name='existing_images']");
+    if (hiddenInput) hiddenInput.remove();
+
+    if (url) {
+      await fetch("/admin/delete-image", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ image_url: url })
+      });
+    }
+
+    card.remove();
+
+  });
+
+
+  /* ================= AJAX FORM SUBMIT ================= */
+
+  projectForm.addEventListener("submit", async function (e) {
+    e.preventDefault();
+    const formData = new FormData(projectForm);
+    try {
+      const response = await fetch(projectForm.action, {
+        method: "POST",
+        body: formData
+      });
+      const result = await response.json();
+      if (result.success) {
+        popup.style.display = "none";
+        location.reload();
+      } else {
+        alert("Failed to update project");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Server error");
+    }
+  });
 
 });
 
@@ -458,7 +408,6 @@ alert("Server error");
 
 <script>
 const savedTheme = localStorage.getItem("theme");
-
 if (savedTheme === "dark") {
     document.documentElement.setAttribute("data-theme", "dark");
 } else {
