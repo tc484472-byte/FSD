@@ -173,11 +173,14 @@ document.addEventListener("DOMContentLoaded", async function(){
 
   currencySelect.addEventListener("change", function(){
     const currency = this.value;
+
     if(currency === baseCurrency){
       convertedPrice.innerText = "";
       return;
     }
+
     const rate = exchangeRates[currency];
+
     if(rate){
       const converted = (basePrice * rate).toFixed(2);
       convertedPrice.innerText = `≈ ${converted} ${currency}`;
@@ -190,34 +193,55 @@ function changeImage(element){
   document.getElementById("mainImage").src = element.src;
 }
 
-function payNow(event){
+
+// 🔥 FINAL PAYMENT FUNCTION
+async function payNow(event){
   if(event) event.preventDefault();
 
-  var priceDisplay = document.getElementById("priceDisplay");
+  const priceDisplay = document.getElementById("priceDisplay");
+  const amount = priceDisplay.dataset.price;
 
-  var options = {
-    "key": "YOUR_RAZORPAY_PUBLIC_KEY",
-    "amount": priceDisplay.dataset.price * 100,
-    "currency": priceDisplay.dataset.currency,
-    "name": "WebRyx",
-    "description": "Project Purchase",
-    "handler": function(response){
-      alert("Payment Successful!");
-      document.body.style.overflow = "auto";
-    },
-    "modal": {
-      "ondismiss": function(){
-        document.body.style.overflow = "auto";
+  try {
+
+    // 🔹 Step 1: Create order from backend
+    const res = await fetch("/create-order", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ amount: amount })
+    });
+
+    const order = await res.json();
+
+    // 🔹 Step 2: Open Razorpay popup
+    var options = {
+      "key": "rzp_test_Sdqfh8h3jNQIJE",   // 👉 PUT YOUR API KEY HERE
+      "amount": order.amount,
+      "currency": order.currency,
+      "name": "WebRyx",
+      "description": "Project Purchase",
+      "order_id": order.id,
+
+      "handler": function (response){
+        alert("Payment Successful!");
+        console.log(response);
+      },
+
+      "modal": {
+        "ondismiss": function(){
+          document.body.style.overflow = "auto";
+        }
       }
-    }
-  };
+    };
 
-  var rzp1 = new Razorpay(options);
-  rzp1.open();
+    var rzp = new Razorpay(options);
+    rzp.open();
 
-  setTimeout(function(){
-    document.body.style.overflow = "auto";
-  }, 500);
+  } catch (error) {
+    console.error("Payment Error:", error);
+    alert("Something went wrong!");
+  }
 }
 
 </script>

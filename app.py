@@ -1,5 +1,6 @@
 import os
 import uuid
+import razorpay
 from dotenv import load_dotenv
 from flask import Flask, render_template, request, redirect, flash, jsonify, session, url_for
 from supabase import create_client, Client
@@ -37,6 +38,11 @@ serializer = URLSafeTimedSerializer(app.secret_key)
 SUPABASE_URL = "https://yuuvbsctwcrzubblkjlq.supabase.co"
 SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+
+razorpay_client = razorpay.Client(auth=(
+    os.environ.get("RAZORPAY_KEY_ID"),
+    os.environ.get("RAZORPAY_KEY_SECRET")
+))
 
 
 # ================================
@@ -566,6 +572,25 @@ def admin_users():
         print("ADMIN USERS ERROR:", e)
         users = []
     return render_template("admin/users.html", users=users)
+
+@app.route("/create-order", methods=["POST"])
+def create_order():
+    try:
+        data = request.get_json()
+
+        amount = int(float(data["amount"]) * 100)  # ₹ → paise
+
+        order = razorpay_client.order.create({
+            "amount": amount,
+            "currency": "INR",
+            "payment_capture": 1
+        })
+
+        return jsonify(order)
+
+    except Exception as e:
+        print("ORDER ERROR:", e)
+        return jsonify({"error": str(e)}), 500
 
 
 # ================= RUN APP ================= #
