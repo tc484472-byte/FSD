@@ -69,10 +69,27 @@ def is_safe_url(target):
     return test_url.scheme in ("http", "https") and ref_url.netloc == test_url.netloc
 
 
+# # ================================
+# # HELPER — PROJECT IMAGES
+# # ================================
+# def attach_project_images(projects):
+#     images_res = supabase.table("project_images").select("project_id,image_url").execute()
+#     image_map  = {}
+#     for img in images_res.data:
+#         pid = img["project_id"]
+#         if pid not in image_map:
+#             image_map[pid] = []
+#         image_map[pid].append(img["image_url"])
+#     for project in projects:
+#         project_images       = image_map.get(project["id"], [])
+#         project["images"]    = project_images
+#         project["thumbnail"] = project_images[0] if project_images else None
+#     return projects
 # ================================
-# HELPER — PROJECT IMAGES
+# HELPER — now uses JOIN via view
 # ================================
 def attach_project_images(projects):
+    """Legacy helper kept for compatibility — use get_projects_with_images() for new code."""
     images_res = supabase.table("project_images").select("project_id,image_url").execute()
     image_map  = {}
     for img in images_res.data:
@@ -87,12 +104,36 @@ def attach_project_images(projects):
     return projects
 
 
+def get_projects_with_images(limit=None, category=None, division=None):
+    """
+    Uses JOIN-based view — single DB round trip instead of 2.
+    Returns projects with images[] and thumbnail already attached.
+    """
+    query = supabase.table("projects_with_images").select("*").order("created_at", desc=True)
+    if category and category != "all":
+        query = query.eq("category", category)
+    if division and division != "all":
+        query = query.eq("division", division)
+    if limit:
+        query = query.limit(limit)
+
+    response = query.execute()
+    projects = response.data
+
+    # Normalize: images comes as JSON array from the view
+    for project in projects:
+        imgs = project.get("images") or []
+        project["images"]    = imgs
+        project["thumbnail"] = imgs[0] if imgs else None
+
+    return projects
+
+
 # ================= USER ROUTES ================= #
 
 @app.route("/")
 def index():
-    response = supabase.table("projects").select("*").order("created_at", desc=True).limit(4).execute()
-    projects = attach_project_images(response.data)
+    projects = get_projects_with_images(limit=4)
     return render_template("index.html", projects=projects)
 
 
@@ -153,13 +194,7 @@ def project():
     try:
         category = request.args.get("category")
         division = request.args.get("division")
-        query    = supabase.table("projects").select("*")
-        if category and category != "all":
-            query = query.eq("category", category)
-        if division and division != "all":
-            query = query.eq("division", division)
-        response = query.order("created_at", desc=True).execute()
-        projects = attach_project_images(response.data)
+        projects = get_projects_with_images(category=category, division=division)
         return render_template("project.html", projects=projects)
     except Exception as e:
         print("PROJECT LIST ERROR:", e)
@@ -231,12 +266,12 @@ def add_project():
         base_currency = request.form.get("base_currency") if has_price else "INR"
         division      = request.form.get("division", "A")
 
-        # 🔥 EXISTING IMAGES (coming from hidden inputs)
+        #  EXISTING IMAGES (coming from hidden inputs)
         existing_images = request.form.getlist("existing_images")
 
         new_image_urls = []
 
-        # 🔥 Upload NEW images
+        #  Upload NEW images
         for file in files:
             if file and file.filename != "":
                 ext = file.filename.split('.')[-1]
@@ -253,7 +288,7 @@ def add_project():
                 image_url = supabase.storage.from_("project-images").get_public_url(file_name)
                 new_image_urls.append({"url": image_url})
 
-        # 🔥 MERGE old + new images
+        #  MERGE old + new images
         final_images = []
 
         # keep old
@@ -267,7 +302,7 @@ def add_project():
         # if empty → None
         p_images = final_images if final_images else None
 
-        # 🔥 CALL SQL FUNCTION
+        #  CALL SQL FUNCTION
         result = supabase.rpc("upsert_project", {
             "p_project_id": request.form.get("project_id") or None,
             "p_title": request.form.get("title"),
@@ -294,19 +329,49 @@ def add_project():
             "error": str(e)
         }), 500
 
+# @app.route("/admin/projectback")
+# def project_back():
+#     projects = get_projects_with_images()
+#     return render_template("admin/projectback.html", projects=projects)
+
+
 @app.route("/admin/projectback")
 def project_back():
-    response = supabase.table("projects").select("*").order("created_at", desc=True).execute()
-    projects = attach_project_images(response.data)
-    return render_template("admin/projectback.html", projects=projects)
-
+    return render_template("admin/projectback.html")
 
 @app.route("/admin/projects")
-def all_projects():
-    response = supabase.table("projects").select("*").order("created_at", desc=True).execute()
-    projects = attach_project_images(response.data)
-    return render_template("admin/projects.html", projects=projects)
-
+def all_projects():                  
+    if not session.get("admin"):
+        return redirect(url_for("login_page"))
+    page      = int(request.args.get("page", 1))
+    per_page  = int(request.args.get("per_page", 10))
+    category  = request.args.get("category") or None
+    division  = request.args.get("division") or None
+    offset    = (page - 1) * per_page
+    try:
+        result = supabase.rpc("get_projects_paginated", {
+            "p_limit":    per_page,
+            "p_offset":   offset,
+            "p_category": category,
+            "p_division": division
+        }).execute()
+        rows        = result.data
+        total_count = rows[0]["total_count"] if rows else 0
+        total_pages = (total_count + per_page - 1) // per_page
+        for row in rows:
+            imgs = row.get("images") or []
+            row["thumbnail"] = imgs[0] if imgs else None
+        return render_template(
+            "admin/projects.html",
+            projects    = rows,
+            page        = page,
+            per_page    = per_page,
+            total_pages = total_pages,
+            total_count = total_count
+        )
+    except Exception as e:
+        print("PAGINATED ERROR:", e)
+        return render_template("admin/projects.html", projects=[])
 
 @app.route("/admin/delete-project/<project_id>", methods=["DELETE"])
 def delete_project(project_id):
